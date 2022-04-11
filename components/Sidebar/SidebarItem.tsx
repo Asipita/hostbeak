@@ -15,7 +15,6 @@ export default function SidebarItem({
   collapsedIcon,
 }: SidebarElementProps) {
   const router = useRouter();
-  console.log({ router });
   // a more complex function will be needed in the future, but this should suffice for now
   function isActive(link: string): boolean {
     return router.asPath.includes(link);
