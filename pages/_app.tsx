@@ -1,17 +1,34 @@
-import { AppProps } from 'next/app';
-import Head from 'next/head';
-import { MantineProvider } from '@mantine/core';
-import '../styles/globals.css'
+import { AppProps } from "next/app";
+import Head from "next/head";
+import { MantineProvider } from "@mantine/core";
+import { ReactElement, ReactNode } from "react";
+import { NextPage } from "next";
+import "../styles/globals.css";
 
+type GetLayout = (page: ReactNode) => ReactNode;
 
-export default function App(props: AppProps) {
+type Page<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: GetLayout;
+};
+
+type MyAppProps<P = {}> = AppProps<P> & {
+  Component: Page<P>;
+};
+
+const defaultGetLayout: GetLayout = (page: ReactNode): ReactNode => page;
+
+export default function App(props: MyAppProps) {
   const { Component, pageProps } = props;
+  const getLayout = Component?.getLayout ?? defaultGetLayout;
 
   return (
     <>
       <Head>
-        <title>Page title</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <title>Hostbeak | Website</title>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
       </Head>
 
       <MantineProvider
@@ -19,10 +36,10 @@ export default function App(props: AppProps) {
         withNormalizeCSS
         theme={{
           /** Put your mantine theme override here */
-          colorScheme: 'light',
+          colorScheme: "light",
         }}
       >
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </MantineProvider>
     </>
   );
